@@ -59,18 +59,19 @@ input, select {
   box-sizing: border-box;
 }
 
-input.error { border-color: red; }
-input.valid { border-color: green; }
+input.error, select.error { border-color: red; }
+input.valid, select.valid { border-color: green; }
 
 .error-msg {
   color: red;
   font-size: 12px;
   margin-top: 4px;
-  display: none;
+  display: block;
+  min-height: 14px;
 }
 
 .btn-box {
- text-align:center;
+  text-align:center;
   margin-top: 20px;
 }
 
@@ -102,24 +103,24 @@ footer {
     <h2>Student Information Form</h2>
   </div>
 
-  <form id="studentForm" action="images/page2.html" method="get">
+  <form id="studentForm" action="page2.htm" method="get">
 
     <div class="form-group">
       <label>Student ID</label>
-      <input type="text" id="studentID" placeholder="**-****" required>
-      <div class="error-msg" id="idError">The format is *-***** (e.g., 12-3456)</div>
+      <input type="text" id="studentID" placeholder="*-****" required>
+      <div class="error-msg" id="studentIDError"></div>
     </div>
 
     <div class="form-group">
       <label>Name</label>
-      <input type="text" id="studentName" placeholder="First, Middle, Last" required>
-      <div class="error-msg" id="nameError">The format is First Middle Last</div>
+      <input type="text" id="studentName" placeholder="Full Name" required>
+      <div class="error-msg" id="studentNameError"></div>
     </div>
    
     <div class="form-group">
       <label>Section</label>
       <input type="text" id="section" required>
-      <div class="error-msg" id="sectionError">Please enter your section</div>
+      <div class="error-msg" id="sectionError"></div>
     </div>
 
     <div class="form-group">
@@ -131,7 +132,7 @@ footer {
         <option value="BSED">BSED</option>
         <option value="Others">Others</option>
       </select>
-      <div class="error-msg" id="courseError">Please select a course</div>
+      <div class="error-msg" id="courseError"></div>
     </div>
     
     <div class="btn-box">
@@ -143,77 +144,44 @@ footer {
 
 <footer>
   <p><i>© All Rights Reserved - Student Information System</i></p>
+  <b>Ranido, Ampo, Teoxon</b>
 </footer>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
 $(function(){
-
-  // Validation patterns
-  const patterns = {
-    studentID: /^\d{2}-\d+$/,
-    studentName: /^[A-Za-z]+ [A-Za-z]+ [A-Za-z]+$/
+  // Validation patterns and error messages
+  const fields = {
+    studentID: {pattern: /^\d{2}-\d+$/, error: "The format is *-***** (e.g., 12-3456)"},
+    studentName: {pattern: /.+/, error: "Please enter your full name"},
+    section: {pattern: /.+/, error: "Please enter your section"},
+    course: {pattern: /.+/, error: "Please select a course"}
   };
 
-  // Live keyup/change validation
-  $('#studentID, #studentName, #section, #course').on('keyup change', function(){
-    const id = $(this).attr('id');
-    const val = $(this).val().trim();
-    if(id === 'studentID' && patterns.studentID.test(val)) {
-      $(this).removeClass('error').addClass('valid'); $('#idError').hide();
-    } else if(id === 'studentName' && patterns.studentName.test(val)) {
-      $(this).removeClass('error').addClass('valid'); $('#nameError').hide();
-    } else if(id === 'section' && val !== '') {
-      $(this).removeClass('error').addClass('valid'); $('#sectionError').hide();
-    } else if(id === 'course' && val !== '') {
-      $(this).removeClass('error').addClass('valid'); $('#courseError').hide();
+  // Validate any field
+  function validate(el){
+    const id = el.attr('id'), val = el.val().trim();
+    if(!fields[id].pattern.test(val)){
+      el.removeClass('valid').addClass('error');
+      $('#' + id + 'Error').text(fields[id].error);
     } else {
-      $(this).removeClass('valid').removeClass('error');
+      el.removeClass('error').addClass('valid');
+      $('#' + id + 'Error').text('');
     }
+  }
+
+  // Attach events to all inputs/select
+  $('#studentID, #studentName, #section, #course').on('keyup change blur', function(){
+    validate($(this));
   });
 
-  // Blur validation
-  $('#studentID').on('blur', function(){
-    if(patterns.studentID.test($(this).val().trim())){
-      $(this).addClass('valid').removeClass('error'); $('#idError').hide();
-    } else {
-      $(this).addClass('error').removeClass('valid'); $('#idError').show();
-    }
-  });
-
-  $('#studentName').on('blur', function(){
-    if(patterns.studentName.test($(this).val().trim())){
-      $(this).addClass('valid').removeClass('error'); $('#nameError').hide();
-    } else {
-      $(this).addClass('error').removeClass('valid'); $('#nameError').show();
-    }
-  });
-
-  $('#section').on('blur', function(){
-    if($(this).val().trim() !== ''){
-      $(this).addClass('valid').removeClass('error'); $('#sectionError').hide();
-    } else {
-      $(this).addClass('error').removeClass('valid'); $('#sectionError').show();
-    }
-  });
-
-  $('#course').on('blur', function(){
-    if($(this).val() !== ''){
-      $(this).addClass('valid').removeClass('error'); $('#courseError').hide();
-    } else {
-      $(this).addClass('error').removeClass('valid'); $('#courseError').show();
-    }
-  });
-
-  // On submit, trigger all blurs and prevent submission if any error
+  // On form submit, validate all and prevent submission if any error
   $('#studentForm').on('submit', function(e){
-    $('#studentID, #studentName, #section, #course').blur();
-    if($('.error').length > 0) e.preventDefault();
+    $('#studentID, #studentName, #section, #course').each(function(){ validate($(this)); });
+    if($('.error').length) e.preventDefault();
   });
-
 });
 </script>
 
 </body>
-
 </html>
