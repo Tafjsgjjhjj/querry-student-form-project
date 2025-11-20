@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Student Information Form</title>
+<style>
+:root {
+  --primary: #0b8f35;
+  --bg-dark: #064d25;
+}
+
+body {
+  background: var(--bg-dark);
+  margin: 0;
+  font-family: Arial, sans-serif;
+}
+
+.container {
+  max-width: 300px;
+  margin: 40px auto;
+  background: white;
+  padding: 25px;
+  border-radius: 10px;
+}
+
+.header {
+  text-align: center;
+}
+
+.header img {
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 10px;
+}
+
+h2 {
+  color: var(--primary);
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+label {
+  font-weight: bold;
+  display: block;
+  margin-bottom: 8px;
+}
+
+input:not([type="radio"]) {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #777;
+  border-radius: 5px;
+  box-sizing: border-box;
+}
+
+input.error { border-color: red; }
+input.valid { border-color: green; }
+
+.error-msg {
+  color: red;
+  font-size: 12px;
+  margin-top: 4px;
+  display: none;
+}
+
+.btn-box {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.btn {
+  background: var(--primary);
+  color: white;
+  padding: 10px 25px;
+  border: 0;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.btn:hover {
+  background: #066622;
+}
+
+#formSubmitMsg {
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+  padding: 30px 40px;
+  border-radius: 10px;
+  font-weight: bold;
+  font-size: 20px;
+  text-align: center;
+  z-index: 1000;
+  box-shadow: 0px 5px 15px rgba(0,0,0,0.3);
+}
+
+footer {
+  text-align: center;
+  color: white;
+  margin-top: 20px;
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+  <div class="header">
+    <img src="images/your-logo.png" alt="Logo">
+    <h2>Personal Information</h2>
+  </div>
+
+  <form id="personalForm">
+    <div class="form-group">
+      <label>Age</label>
+      <input type="number" id="age" required>
+      <div class="error-msg" id="ageError">Please enter your age</div>
+    </div>
+
+    <div class="form-group">
+      <label>Gender</label>
+      <label><input type="radio" name="gender" value="male"> Male</label>
+      <label><input type="radio" name="gender" value="female"> Female</label>
+      <label><input type="radio" name="gender" value="other"> Other</label>
+    </div>
+
+    <div class="form-group">
+      <label>Birthdate</label>
+      <input type="date" id="birthdate" required>
+      <div class="error-msg" id="birthError">Please select your birthdate</div>
+    </div>
+
+    <div class="form-group">
+      <label>Contact Number</label>
+      <input type="tel" id="contactNumber" required>
+      <div class="error-msg" id="contactError">Must be exactly 11 digits</div>
+    </div>
+
+    <div class="form-group">
+      <label>Email</label>
+      <input type="email" id="email" required>
+      <div class="error-msg" id="emailError">Please enter a valid email</div>
+    </div>
+
+    <div class="form-group">
+      <label>Street Address</label>
+      <input type="text" id="address" required>
+      <div class="error-msg" id="addressError">Please enter your address</div>
+    </div>
+
+    <div class="form-group">
+      <label>Upload your photo 2x2</label>
+      <input type="file" id="photo" required>
+      <div class="error-msg" id="photoError">Please upload a photo</div>
+    </div>
+
+    <div class="btn-box">
+      <button class="btn" type="submit">Next</button>
+    </div>
+  </form>
+</div>
+
+<div id="formSubmitMsg">Form Submitted</div>
+
+<footer>
+  <p><i>© All Rights Reserved - Student Information System</i></p>
+</footer>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+// Existing Age & Birthdate live/blur validation
+$('#age,#birthdate').on('keyup change', function(){
+  if($(this).val().trim()!=='') $(this).removeClass('error').addClass('valid');
+  else $(this).removeClass('valid error');
+});
+
+$('#age').on('blur', function(){
+  const ageVal = parseInt($(this).val());
+  const birthVal = $('#birthdate').val();
+  if(birthVal && !isNaN(ageVal)){
+    const birth = new Date(birthVal);
+    const today = new Date();
+    const calcAge = today.getFullYear() - birth.getFullYear() -
+      (today.getMonth() < birth.getMonth() || 
+      (today.getMonth() === birth.getMonth() && today.getDate() < birth.getDate()) ? 1 : 0);
+    if(ageVal === calcAge){
+      $('#age,#birthdate').addClass('valid').removeClass('error');
+      $('#ageError,#birthError').hide();
+    } else {
+      $('#age,#birthdate').addClass('error').removeClass('valid');
+      $('#ageError,#birthError').text('Age does not match birthdate').show();
+    }
+  } else {
+    if(!$(this).val().trim()){
+      $(this).addClass('error').removeClass('valid');
+      $('#ageError').text('Please enter your age').show();
+    }
+  }
+});
+
+$('#birthdate').on('blur', function(){
+  $('#age').blur();
+});
+
+// ---- NEW VALIDATIONS ----
+// Contact Number
+$('#contactNumber').on('keyup change', function(){ 
+  const val = $(this).val().replace(/\D/g,''); 
+  if(val.length === 11) $(this).removeClass('error').addClass('valid');
+  else $(this).removeClass('valid').removeClass('error');
+});
+$('#contactNumber').on('blur', function(){
+  const val = $(this).val().replace(/\D/g,'');
+  if(val.length === 11){
+    $(this).addClass('valid').removeClass('error');
+    $('#contactError').hide();
+  } else {
+    $(this).addClass('error').removeClass('valid');
+    $('#contactError').show();
+  }
+});
+
+// Email
+$('#email').on('keyup change', function(){
+  const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if(re.test($(this).val().trim())) $(this).removeClass('error').addClass('valid');
+  else $(this).removeClass('valid').removeClass('error');
+});
+$('#email').on('blur', function(){
+  const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if(re.test($(this).val().trim())){
+    $(this).addClass('valid').removeClass('error');
+    $('#emailError').hide();
+  } else {
+    $(this).addClass('error').removeClass('valid');
+    $('#emailError').show();
+  }
+});
+
+// Address
+$('#address').on('keyup change', function(){
+  if($(this).val().trim()!=='') $(this).removeClass('error').addClass('valid');
+  else $(this).removeClass('valid').removeClass('error');
+});
+$('#address').on('blur', function(){
+  if($(this).val().trim()!==''){
+    $(this).addClass('valid').removeClass('error');
+    $('#addressError').hide();
+  } else {
+    $(this).addClass('error').removeClass('valid');
+    $('#addressError').show();
+  }
+});
+
+// Photo
+$('#photo').on('change', function(){
+  if($(this).val()!=='') $(this).removeClass('error').addClass('valid');
+  else $(this).removeClass('valid').removeClass('error');
+});
+$('#photo').on('blur', function(){
+  if($(this).val()!==''){
+    $(this).addClass('valid').removeClass('error');
+    $('#photoError').hide();
+  } else {
+    $(this).addClass('error').removeClass('valid');
+    $('#photoError').show();
+  }
+});
+
+// Form submit
+$('#personalForm').on('submit', function(e){
+  e.preventDefault();
+  $('#age,#birthdate,#contactNumber,#email,#address,#photo').blur();
+  if($('.error').length===0){
+    $('#formSubmitMsg').fadeIn(200).delay(2000).fadeOut(200);
+  }
+});
+</script>
+
+</body>
+</html>
