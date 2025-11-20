@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Student Information Form</title>
+
+<style>
+:root {
+  --primary: #0b8f35;
+  --bg-dark: #064d25;
+}
+
+body {
+  background: var(--bg-dark);
+  margin: 0;
+  font-family: Arial, sans-serif;
+}
+
+.container {
+  max-width: 300px;
+  margin: 40px auto;
+  background: white;
+  padding: 25px;
+  border-radius: 10px;
+}
+
+.header {
+  text-align: center;
+}
+
+.header img {
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 10px;
+}
+
+h2 {
+  color: var(--primary);
+}
+
+.form-group {
+  margin-bottom: 15px;
+  position: relative;
+}
+
+label {
+  font-weight: bold;
+  display: block;
+  margin-bottom: 8px;
+}
+
+input, select {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #777;
+  border-radius: 5px;
+  box-sizing: border-box;
+}
+
+input.error { border-color: red; }
+input.valid { border-color: green; }
+
+.error-msg {
+  color: red;
+  font-size: 12px;
+  margin-top: 4px;
+  display: none;
+}
+
+.btn-box {
+ text-align:center;
+  margin-top: 20px;
+}
+
+.btn {
+  background: var(--primary);
+  color: white;
+  padding: 10px 25px;
+  border: 0;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.btn:hover {
+  background: #066622;
+}
+
+footer {
+  text-align: center;
+  color: white;
+  margin-top: 20px;
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header">
+    <img src="images/your-logo.png" alt="Logo">
+    <h2>Student Information Form</h2>
+  </div>
+
+  <form id="studentForm" action="page2.htm" method="get">
+
+    <div class="form-group">
+      <label>Student ID</label>
+      <input type="text" id="studentID" placeholder="**-****" required>
+      <div class="error-msg" id="idError">The format is *-***** (e.g., 12-3456)</div>
+    </div>
+
+    <div class="form-group">
+      <label>Name</label>
+      <input type="text" id="studentName" placeholder="First, Middle, Last" required>
+      <div class="error-msg" id="nameError">The format is First Middle Last</div>
+    </div>
+   
+    <div class="form-group">
+      <label>Section</label>
+      <input type="text" id="section" required>
+      <div class="error-msg" id="sectionError">Please enter your section</div>
+    </div>
+
+    <div class="form-group">
+      <label for="course">Course</label>
+      <select id="course" name="course" required>
+        <option value="" disabled selected>Select your course</option>
+        <option value="BSIT">BSIT</option>
+        <option value="BSCPE">BSCPE</option>
+        <option value="BSED">BSED</option>
+        <option value="Others">Others</option>
+      </select>
+      <div class="error-msg" id="courseError">Please select a course</div>
+    </div>
+    
+    <div class="btn-box">
+      <button class="btn" type="submit">Next</button>
+    </div>
+
+  </form>
+</div>
+
+<footer>
+  <p><i>© All Rights Reserved - Student Information System</i></p>
+</footer>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+$(function(){
+
+  // Validation patterns
+  const patterns = {
+    studentID: /^\d{2}-\d+$/,
+    studentName: /^[A-Za-z]+ [A-Za-z]+ [A-Za-z]+$/
+  };
+
+  // Live keyup/change validation
+  $('#studentID, #studentName, #section, #course').on('keyup change', function(){
+    const id = $(this).attr('id');
+    const val = $(this).val().trim();
+    if(id === 'studentID' && patterns.studentID.test(val)) {
+      $(this).removeClass('error').addClass('valid'); $('#idError').hide();
+    } else if(id === 'studentName' && patterns.studentName.test(val)) {
+      $(this).removeClass('error').addClass('valid'); $('#nameError').hide();
+    } else if(id === 'section' && val !== '') {
+      $(this).removeClass('error').addClass('valid'); $('#sectionError').hide();
+    } else if(id === 'course' && val !== '') {
+      $(this).removeClass('error').addClass('valid'); $('#courseError').hide();
+    } else {
+      $(this).removeClass('valid').removeClass('error');
+    }
+  });
+
+  // Blur validation
+  $('#studentID').on('blur', function(){
+    if(patterns.studentID.test($(this).val().trim())){
+      $(this).addClass('valid').removeClass('error'); $('#idError').hide();
+    } else {
+      $(this).addClass('error').removeClass('valid'); $('#idError').show();
+    }
+  });
+
+  $('#studentName').on('blur', function(){
+    if(patterns.studentName.test($(this).val().trim())){
+      $(this).addClass('valid').removeClass('error'); $('#nameError').hide();
+    } else {
+      $(this).addClass('error').removeClass('valid'); $('#nameError').show();
+    }
+  });
+
+  $('#section').on('blur', function(){
+    if($(this).val().trim() !== ''){
+      $(this).addClass('valid').removeClass('error'); $('#sectionError').hide();
+    } else {
+      $(this).addClass('error').removeClass('valid'); $('#sectionError').show();
+    }
+  });
+
+  $('#course').on('blur', function(){
+    if($(this).val() !== ''){
+      $(this).addClass('valid').removeClass('error'); $('#courseError').hide();
+    } else {
+      $(this).addClass('error').removeClass('valid'); $('#courseError').show();
+    }
+  });
+
+  // On submit, trigger all blurs and prevent submission if any error
+  $('#studentForm').on('submit', function(e){
+    $('#studentID, #studentName, #section, #course').blur();
+    if($('.error').length > 0) e.preventDefault();
+  });
+
+});
+</script>
+
+</body>
+</html>
