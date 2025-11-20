@@ -68,7 +68,8 @@ input.valid { border-color: green; }
 }
 
 .btn-box {
-  text-align: center;
+  display:flex;
+  gap:140px;
   margin-top: 20px;
 }
 
@@ -163,6 +164,7 @@ footer {
     </div>
 
     <div class="btn-box">
+      <button type="button" class="btn" onclick="window.history.back()">Back</button>
       <button class="btn" type="submit">Next</button>
     </div>
   </form>
@@ -287,3 +289,4 @@ $('#personalForm').on('submit', function(e){
 
 </body>
 </html>
+
