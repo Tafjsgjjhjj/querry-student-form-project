@@ -150,7 +150,7 @@ footer {
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
 $(function(){
-  // Validation patterns and error messages
+  
   const fields = {
     studentID: {pattern: /^\d{2}-\d+$/, error: "The format is *-***** (e.g., 12-3456)"},
     studentName: {pattern: /.+/, error: "Please enter your full name"},
@@ -158,7 +158,7 @@ $(function(){
     course: {pattern: /.+/, error: "Please select a course"}
   };
 
-  // Validate any field
+  
   function validate(el){
     const id = el.attr('id'), val = el.val().trim();
     if(!fields[id].pattern.test(val)){
@@ -170,12 +170,12 @@ $(function(){
     }
   }
 
-  // Attach events to all inputs/select
+  
   $('#studentID, #studentName, #section, #course').on('keyup change blur', function(){
     validate($(this));
   });
 
-  // On form submit, validate all and prevent submission if any error
+
   $('#studentForm').on('submit', function(e){
     $('#studentID, #studentName, #section, #course').each(function(){ validate($(this)); });
     if($('.error').length) e.preventDefault();
@@ -185,3 +185,4 @@ $(function(){
 
 </body>
 </html>
+
