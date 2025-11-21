@@ -178,7 +178,7 @@ footer {
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-// Existing Age & Birthdate live/blur validation
+
 $('#age,#birthdate').on('keyup change', function(){
   if($(this).val().trim()!=='') $(this).removeClass('error').addClass('valid');
   else $(this).removeClass('valid error');
@@ -211,9 +211,6 @@ $('#age').on('blur', function(){
 $('#birthdate').on('blur', function(){
   $('#age').blur();
 });
-
-// ---- NEW VALIDATIONS ----
-// Contact Number
 $('#contactNumber').on('keyup change', function(){ 
   const val = $(this).val().replace(/\D/g,''); 
   if(val.length === 11) $(this).removeClass('error').addClass('valid');
@@ -228,9 +225,7 @@ $('#contactNumber').on('blur', function(){
     $(this).addClass('error').removeClass('valid');
     $('#contactError').show();
   }
-});
-
-// Email
+})
 $('#email').on('keyup change', function(){
   const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if(re.test($(this).val().trim())) $(this).removeClass('error').addClass('valid');
@@ -247,7 +242,7 @@ $('#email').on('blur', function(){
   }
 });
 
-// Address
+
 $('#address').on('keyup change', function(){
   if($(this).val().trim()!=='') $(this).removeClass('error').addClass('valid');
   else $(this).removeClass('valid').removeClass('error');
@@ -262,7 +257,7 @@ $('#address').on('blur', function(){
   }
 });
 
-// Photo
+
 $('#photo').on('change', function(){
   if($(this).val()!=='') $(this).removeClass('error').addClass('valid');
   else $(this).removeClass('valid').removeClass('error');
@@ -276,8 +271,7 @@ $('#photo').on('blur', function(){
     $('#photoError').show();
   }
 });
-
-// Form submit
+  
 $('#personalForm').on('submit', function(e){
   e.preventDefault();
   $('#age,#birthdate,#contactNumber,#email,#address,#photo').blur();
@@ -289,4 +283,5 @@ $('#personalForm').on('submit', function(e){
 
 </body>
 </html>
+
 
